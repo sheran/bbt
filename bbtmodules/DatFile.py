@@ -76,11 +76,13 @@ class Record:
 	def path(self):
 		return self.header_data[0]
 	
-	def local_timestamp(self):
-		return time.ctime(self.header[5]/1000)+" (Local time)"
-
 	def gmt_timestamp(self):
-		return time.asctime(time.gmtime(self.header[5]/1000))+" (GMT)"
+		tz = time.timezone
+		time_from_file = time.gmtime((self.header[5]/1000) + tz) 
+		return time.asctime(time_from_file) + " (GMT)"
+
+	def local_timestamp(self):
+		return time.asctime(time.gmtime(self.header[5]/1000))+" (Local Time)"  # The BBThumbs timestamp is local to the device timezone, but only output gmtime()
 	
 	def data_len(self):
 		return self.header[4]

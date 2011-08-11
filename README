@@ -1,4 +1,4 @@
-bbt.py v0.4b - Parser for BlackBerry ThumbsxxxXxxx.key file
+bbt.py v0.5b - Parser for BlackBerry ThumbsxxxXxxx.key file
 
 bbt will read a BlackBerry "key" thumbnail file and print out the record id of each thumbnail and corresponding offset of the record found inside the "dat" file.  bbt
 will also read the older BBThumbs.dat file found on devices pre OS5
@@ -24,6 +24,10 @@ and extracts all thumbnails into this directory.
 Known Issues:
 
 * Currently minimal error checking
+
+Change Log:
+
++ 0.5b - Fixed an issue with how timestamps are handled (thanks to Nanni B for pointing this out)
 
 License GPLv2:
 
