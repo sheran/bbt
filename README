@@ -1,0 +1,44 @@
+bbt.py v0.4b - Parser for BlackBerry ThumbsxxxXxxx.key file
+
+bbt will read a BlackBerry "key" thumbnail file and print out the record id of each thumbnail and corresponding offset of the record found inside the "dat" file.  bbt
+will also read the older BBThumbs.dat file found on devices pre OS5
+
+Usage: bbt.py [options]
+  -h, --help: This cruft
+  -k, --key <bbthumbs key file>: Process post OS5 thumbs.key file (requires thumbs.dat file in same directory)
+  -b, --bbthumbs <old bbthumbs file>: Process pre OS5 BBThumbs.dat file
+  -x, --extract: Extracts the thumbnails into directory specified by -o
+  -o, --output <output directory>: Directory to extract thumbs to (used only with -x)
+  -l, --local: Express timestamps in local time as opposed to GMT
+
+Example 1: python bbt.py -k thumbs76x76.key -x -o output
+
+The above example processes the files thumbs76x76.key and thumbs76x76.dat in the current directory, creates a directory named "output" 
+and extracts all thumbnails into this directory.
+
+Example 2: python bbt.py -b BBThumbs.dat -x -o output
+
+The above example processes the file BBThumbs.dat in the current directory, creates a directory named "output" 
+and extracts all thumbnails into this directory.
+
+Known Issues:
+
+* Currently minimal error checking
+
+License GPLv2:
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+
