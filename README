@@ -9,7 +9,6 @@ Usage: bbt.py [options]
   -b, --bbthumbs <old bbthumbs file>: Process pre OS5 BBThumbs.dat file
   -x, --extract: Extracts the thumbnails into directory specified by -o
   -o, --output <output directory>: Directory to extract thumbs to (used only with -x)
-  -l, --local: Express timestamps in local time as opposed to GMT
 
 Example 1: python bbt.py -k thumbs76x76.key -x -o output
 
@@ -27,7 +26,7 @@ Known Issues:
 
 Change Log:
 
-+ 0.5b - Fixed an issue with how timestamps are handled (thanks to Nanni B for pointing this out)
++ 0.5b - Fixed an issue with how timestamps are handled (thanks to Nanni Bassetti for pointing this out)
 
 License GPLv2:
 
