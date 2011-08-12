@@ -34,9 +34,8 @@ def usage():
 	print("  -b, --bbthumbs <old bbthumbs file>: Process pre OS5 BBThumbs.dat file")
 	print("  -x, --extract: Extracts the thumbnails into directory specified by -o")
 	print("  -o, --output <output directory>: Directory to extract thumbs to (used only with -x)")
-	print("  -l, --local: Express timestamps in local time as opposed to GMT")
 	
-def process(kf,outdir,extract,local):
+def process(kf,outdir,extract):
 	if(kf.startswith('-')):
 		usage()
 		sys.exit(2)
@@ -73,16 +72,13 @@ def process(kf,outdir,extract,local):
 					ctr += 1
 					if extract:
 						rec.save_to_disk(outdir)
-					if local:
-						timestamp = rec.local_timestamp()
-					else:
-						timestamp = rec.gmt_timestamp()
+					timestamp = rec.gmt_timestamp()
 					print "+ "+rec.name()+" // "+timestamp+" // "+rec.sha1hash()
 		dfile.close()
 		print "*** "+os.path.split(kf)[1]+" has "+str(len(thumbs))+" records"
 		print "*** Processed "+str(ctr)+" records"
 		
-def oldthumbs(bbthumbs,outdir,extract,local):
+def oldthumbs(bbthumbs,outdir,extract):
 	if(bbthumbs.startswith('-')):
 		usage()
 		sys.exit(2)
@@ -99,10 +95,7 @@ def oldthumbs(bbthumbs,outdir,extract,local):
 		for rec in recs:
 			if extract:
 				bbth.record(rec).save_to_disk(outdir)
-			if local:
-				timestamp = bbth.record(rec).local_timestamp()
-			else:
-				timestamp = bbth.record(rec).gmt_timestamp()
+			timestamp = bbth.record(rec).gmt_timestamp()
 			print "+ "+bbth.record(rec).name()+" // "+timestamp+" // "+bbth.record(rec).sha1hash()
 	else:
 		print bbthumbs+" is not a BlackBerry thumbs file!";
@@ -112,7 +105,7 @@ def oldthumbs(bbthumbs,outdir,extract,local):
 
 def main():
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hk:o:xb:l", ["help", "key=","output=","extract","bbthumbs=","local"])
+		opts, args = getopt.getopt(sys.argv[1:], "hk:o:xb:lm", ["help", "key=","output=","extract","bbthumbs=","local","machine"])
 	except getopt.GetoptError, err:
 		print str(err)
 		usage()
@@ -123,6 +116,7 @@ def main():
 	extract = False
 	bbthumbs = None
 	local = False
+	machine = False
 	
 	for o,a in opts:
 		if o in ("-k","--key"):
@@ -136,8 +130,6 @@ def main():
 			extract = True
 		elif o in("-b","--bbthumbs"):
 			bbthumbs = a
-		elif o in("-l","--local"):
-			local = True
 		else:
 			assert False, "unhandled option"
 		
@@ -155,9 +147,9 @@ def main():
 			sys.exit(2)
 		
 	if keyfile:
-		process(keyfile,outdir,extract,local)	
+		process(keyfile,outdir,extract)	
 	elif bbthumbs:
-		oldthumbs(bbthumbs,outdir,extract,local)
+		oldthumbs(bbthumbs,outdir,extract)
 	else:
 		sys.exit()
 
