@@ -22,7 +22,6 @@
 import time
 import struct
 import hashlib
-import calendar
 
 class DatFile:
 	def __init__(self,dat_file):
