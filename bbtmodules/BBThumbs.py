@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# bbt.py v0.5b - BlackBerry BBThumbsXXXxXXX.key file parser
+# bbt.py v0.6b - BlackBerry BBThumbsXXXxXXX.key file parser
 # Copyright (C) 2011, Sheran A. Gunasekera <sheran@zensay.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -22,6 +22,7 @@
 import struct
 import time
 import hashlib
+import os
 
 class BBThumbs:
 	def __init__(self,dat_file):
@@ -118,6 +119,6 @@ class Record:
 		return s.hexdigest()
 	
 	def save_to_disk(self,path):
-		thumbs_file = open(path+"/"+self.name(),'wb')
+		thumbs_file = open(os.path.join(path,self.name()),'wb')
 		thumbs_file.write(self.thumb())
 		thumbs_file.close();

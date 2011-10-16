@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# bbt.py v0.5b - BlackBerry BBThumbsXXXxXXX.key file parser
+# bbt.py v0.6b - BlackBerry BBThumbsXXXxXXX.key file parser
 # Copyright (C) 2011, Sheran A. Gunasekera <sheran@zensay.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -37,6 +37,7 @@ def usage():
 	print("  -f, --offset: Show record ID and Offset of each thumbnail (BBThumbs.dat has no record ID)")
 	
 def process(kf,outdir,extract,offsets):
+	thumbsperrow = 3
 	if(kf.startswith('-')):
 		usage()
 		sys.exit(2)
@@ -67,22 +68,46 @@ def process(kf,outdir,extract,offsets):
 		dfile = DatFile(kf[:-3]+"dat")
 		ctr = 0;
 		if dfile.is_valid:
+			if extract:
+				html = open(os.path.join(outdir,"bbt.html"),"w")
+				html.write("<html>\n<head><style type='text/css'>\np {font-family:'Verdana';font-size: 10px;}\n</style>\n<title>BBT Report for "+kf+"</title></head>\n<body>")
+				html.write("<p>bbt.py - BlackBerry Thumbnails file parser</br>")
+				html.write("Sheran A. Gunasekera</p>")
+				html.write("<p>Report generated on: "+datetime.datetime.now().strftime("%d-%m-%Y %H:%M")+"</p>\n")
+				html.write("<table border=1>\n")
 			for key in thumbs.iterkeys():
 				rec = dfile.record(thumbs[key], key)
 				if rec != None:
-					ctr += 1
 					if extract:
 						rec.save_to_disk(outdir)
 					timestamp = rec.gmt_timestamp()
+					if extract:
+						if ctr == 0 or not ctr%thumbsperrow:
+							skip = 0
+							html.write("<tr><td valign=bottom>")
+						else:
+							html.write("<td valign=bottom>")
+							skip += 1
+						html.write("<img src='"+rec.name()+"' />"+"<p>ID: "+str(key)+"<br/>Offset: "+str(thumbs[key])+"<br/>Name: "+rec.name()+"<br/>Time: "+timestamp+"<br/>Hash: "+rec.sha1hash()+"</p>")
+						if skip == thumbsperrow - 1:
+							skip = 0
+							html.write("</td></tr>\n")
+						else:
+							html.write("</td>\n")
 					if offsets:
 						print "+ ID: "+str(key)+" Offset: "+str(thumbs[key])+" // "+rec.name()+" // "+timestamp+" // "+rec.sha1hash()
 					else:
 						print "+ "+rec.name()+" // "+timestamp+" // "+rec.sha1hash()
+					ctr += 1
+		if extract:
+			html.write("</table>\n</body>\n</html>")
+			html.close()
 		dfile.close()
 		print "*** "+os.path.split(kf)[1]+" has "+str(len(thumbs))+" records"
 		print "*** Processed "+str(ctr)+" records"
 		
 def oldthumbs(bbthumbs,outdir,extract,offsets):
+	thumbsperrow = 3
 	if(bbthumbs.startswith('-')):
 		usage()
 		sys.exit(2)
@@ -96,17 +121,42 @@ def oldthumbs(bbthumbs,outdir,extract,offsets):
 	bbth = BBThumbs(bbthumbs)
 	if bbth.is_valid():
 		recs = bbth.process()
+		if extract:
+			html = open(os.path.join(outdir,"bbt.html"),"w")
+			html.write("<html>\n<head><style type='text/css'>\np {font-family:'Verdana';font-size: 10px;}\n</style>\n<title>BBT Report for "+os.path.split(bbthumbs)[1]+"</title></head>\n<body>")
+			html.write("<p>bbt.py - BlackBerry Thumbnails file parser</br>")
+			html.write("Sheran A. Gunasekera</p>")
+			html.write("<p>Report generated on: "+datetime.datetime.now().strftime("%d-%m-%Y %H:%M")+"</p>\n")
+			html.write("<table border=1>\n")
+		ctr = 0;
 		for rec in recs:
 			if extract:
 				bbth.record(rec).save_to_disk(outdir)
 			timestamp = bbth.record(rec).gmt_timestamp()
+			if extract:
+				if ctr == 0 or not ctr%thumbsperrow:
+					skip = 0
+					html.write("<tr><td valign=bottom>")
+				else:
+					html.write("<td valign=bottom>")
+					skip += 1
+				html.write("<img src='"+bbth.record(rec).name()+"' />"+"<p>Offset: "+str(rec)+"<br/>Name: "+bbth.record(rec).name()+"<br/>Time: "+timestamp+"<br/>Hash: "+bbth.record(rec).sha1hash()+"</p>")
+				if skip == thumbsperrow - 1:
+					skip = 0
+					html.write("</td></tr>\n")
+				else:
+					html.write("</td>\n")
 			if offsets:
 				print "+ Offset: "+str(rec)+" // "+bbth.record(rec).name()+" // "+timestamp+" // "+bbth.record(rec).sha1hash()
 			else:
 				print "+ "+bbth.record(rec).name()+" // "+timestamp+" // "+bbth.record(rec).sha1hash()
+			ctr +=1
 	else:
 		print bbthumbs+" is not a BlackBerry thumbs file!";
 		sys.exit(2)
+	if extract:
+		html.write("</table>\n</body>\n</html>")
+		html.close()
 	bbth.close()
 	print "*** "+os.path.split(bbthumbs)[1]+" has "+str(len(recs))+" records"
 
