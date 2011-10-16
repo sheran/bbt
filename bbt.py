@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# bbt.py v0.4b - BlackBerry BBThumbsXXXxXXX.key file parser
+# bbt.py v0.5b - BlackBerry BBThumbsXXXxXXX.key file parser
 # Copyright (C) 2011, Sheran A. Gunasekera <sheran@zensay.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -34,8 +34,9 @@ def usage():
 	print("  -b, --bbthumbs <old bbthumbs file>: Process pre OS5 BBThumbs.dat file")
 	print("  -x, --extract: Extracts the thumbnails into directory specified by -o")
 	print("  -o, --output <output directory>: Directory to extract thumbs to (used only with -x)")
+	print("  -f, --offset: Show record ID and Offset of each thumbnail (BBThumbs.dat has no record ID)")
 	
-def process(kf,outdir,extract):
+def process(kf,outdir,extract,offsets):
 	if(kf.startswith('-')):
 		usage()
 		sys.exit(2)
@@ -73,12 +74,15 @@ def process(kf,outdir,extract):
 					if extract:
 						rec.save_to_disk(outdir)
 					timestamp = rec.gmt_timestamp()
-					print "+ "+rec.name()+" // "+timestamp+" // "+rec.sha1hash()
+					if offsets:
+						print "+ ID: "+str(key)+" Offset: "+str(thumbs[key])+" // "+rec.name()+" // "+timestamp+" // "+rec.sha1hash()
+					else:
+						print "+ "+rec.name()+" // "+timestamp+" // "+rec.sha1hash()
 		dfile.close()
 		print "*** "+os.path.split(kf)[1]+" has "+str(len(thumbs))+" records"
 		print "*** Processed "+str(ctr)+" records"
 		
-def oldthumbs(bbthumbs,outdir,extract):
+def oldthumbs(bbthumbs,outdir,extract,offsets):
 	if(bbthumbs.startswith('-')):
 		usage()
 		sys.exit(2)
@@ -96,7 +100,10 @@ def oldthumbs(bbthumbs,outdir,extract):
 			if extract:
 				bbth.record(rec).save_to_disk(outdir)
 			timestamp = bbth.record(rec).gmt_timestamp()
-			print "+ "+bbth.record(rec).name()+" // "+timestamp+" // "+bbth.record(rec).sha1hash()
+			if offsets:
+				print "+ Offset: "+str(rec)+" // "+bbth.record(rec).name()+" // "+timestamp+" // "+bbth.record(rec).sha1hash()
+			else:
+				print "+ "+bbth.record(rec).name()+" // "+timestamp+" // "+bbth.record(rec).sha1hash()
 	else:
 		print bbthumbs+" is not a BlackBerry thumbs file!";
 		sys.exit(2)
@@ -105,7 +112,7 @@ def oldthumbs(bbthumbs,outdir,extract):
 
 def main():
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hk:o:xb:lm", ["help", "key=","output=","extract","bbthumbs=","local","machine"])
+		opts, args = getopt.getopt(sys.argv[1:], "hk:o:xb:lmf", ["help", "key=","output=","extract","bbthumbs=","local","machine","offset"])
 	except getopt.GetoptError, err:
 		print str(err)
 		usage()
@@ -117,6 +124,7 @@ def main():
 	bbthumbs = None
 	local = False
 	machine = False
+	offsets = False
 	
 	for o,a in opts:
 		if o in ("-k","--key"):
@@ -130,6 +138,8 @@ def main():
 			extract = True
 		elif o in("-b","--bbthumbs"):
 			bbthumbs = a
+		elif o in("-f","--offset"):
+			offsets = True
 		else:
 			assert False, "unhandled option"
 		
@@ -147,9 +157,9 @@ def main():
 			sys.exit(2)
 		
 	if keyfile:
-		process(keyfile,outdir,extract)	
+		process(keyfile,outdir,extract,offsets)	
 	elif bbthumbs:
-		oldthumbs(bbthumbs,outdir,extract)
+		oldthumbs(bbthumbs,outdir,extract,offsets)
 	else:
 		sys.exit()
 
