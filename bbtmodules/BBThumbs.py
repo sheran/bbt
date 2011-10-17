@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# bbt.py v0.6b - BlackBerry BBThumbsXXXxXXX.key file parser
+# bbt.py v0.7b - BlackBerry BBThumbsXXXxXXX.key file parser
 # Copyright (C) 2011, Sheran A. Gunasekera <sheran@zensay.com>
 #
 # This program is free software; you can redistribute it and/or

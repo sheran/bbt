@@ -1,4 +1,4 @@
-bbt.py v0.6b - Parser for BlackBerry ThumbsxxxXxxx.key file
+bbt.py v0.7b - Parser for BlackBerry ThumbsxxxXxxx.key file
 
 bbt will read a BlackBerry "key" thumbnail file and print out the record id of each thumbnail and corresponding offset of the record found inside the "dat" file.  bbt
 will also read the older BBThumbs.dat file found on devices pre OS5
@@ -27,6 +27,7 @@ Known Issues:
 
 Change Log:
 
++ 0.7b - Fixed issue with duplicate record IDs and records having invalid offsets. (Many thanks to Shafik Punja and John Thompson for finding this bug)
 + 0.6b - Added support for displaying record ID and offset. 
        - Fixed issue with how the output path is created
        - Added feature to generate sparse HTML report. Code is fugly, but still works. The HTML report will be generated to the output 

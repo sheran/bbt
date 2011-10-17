@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# bbt.py v0.6b - BlackBerry BBThumbsXXXxXXX.key file parser
+# bbt.py v0.7b - BlackBerry BBThumbsXXXxXXX.key file parser
 # Copyright (C) 2011, Sheran A. Gunasekera <sheran@zensay.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -54,7 +54,7 @@ def process(kf,outdir,extract,offsets):
 		print kf+" is not a BlackBerry thumbs file!";
 		sys.exit(2)
 	bbt_file.seek(9,1)
-	thumbs = {}
+	thumbs = []
 
 	try:
 		while(True):
@@ -62,7 +62,7 @@ def process(kf,outdir,extract,offsets):
 			bbt_file.seek(4,1)
 			tval = (struct.unpack(">I",bbt_file.read(4))[0])
 			if tval != 0:
-				thumbs[tkey] = tval 
+				thumbs.append([tkey, tval]) 
 	except:
 		bbt_file.close()
 		dfile = DatFile(kf[:-3]+"dat")
@@ -75,8 +75,8 @@ def process(kf,outdir,extract,offsets):
 				html.write("Sheran A. Gunasekera</p>")
 				html.write("<p>Report generated on: "+datetime.datetime.now().strftime("%d-%m-%Y %H:%M")+"</p>\n")
 				html.write("<table border=1>\n")
-			for key in thumbs.iterkeys():
-				rec = dfile.record(thumbs[key], key)
+			for key in thumbs:
+				rec = dfile.record(key[1], key[0])
 				if rec != None:
 					if extract:
 						rec.save_to_disk(outdir)
@@ -88,14 +88,14 @@ def process(kf,outdir,extract,offsets):
 						else:
 							html.write("<td valign=bottom>")
 							skip += 1
-						html.write("<img src='"+rec.name()+"' />"+"<p>ID: "+str(key)+"<br/>Offset: "+str(thumbs[key])+"<br/>Name: "+rec.name()+"<br/>Time: "+timestamp+"<br/>Hash: "+rec.sha1hash()+"</p>")
+						html.write("<img src='"+rec.name()+"' />"+"<p>ID: "+str(key[0])+"<br/>Offset: "+str(key[1])+"<br/>Name: "+rec.name()+"<br/>Time: "+timestamp+"<br/>Hash: "+rec.sha1hash()+"</p>")
 						if skip == thumbsperrow - 1:
 							skip = 0
 							html.write("</td></tr>\n")
 						else:
 							html.write("</td>\n")
 					if offsets:
-						print "+ ID: "+str(key)+" Offset: "+str(thumbs[key])+" // "+rec.name()+" // "+timestamp+" // "+rec.sha1hash()
+						print "+ ID: "+str(key[0])+" Offset: "+str(key[1])+" // "+rec.name()+" // "+timestamp+" // "+rec.sha1hash()
 					else:
 						print "+ "+rec.name()+" // "+timestamp+" // "+rec.sha1hash()
 					ctr += 1

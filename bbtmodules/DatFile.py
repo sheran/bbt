@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# bbt.py v0.6b - BlackBerry BBThumbsXXXxXXX.key file parser
+# bbt.py v0.7b - BlackBerry BBThumbsXXXxXXX.key file parser
 # Copyright (C) 2011, Sheran A. Gunasekera <sheran@zensay.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -48,8 +48,13 @@ class DatFile:
 		
 		header = struct.unpack(">B4sIIIQIB",self.dat_file.read(30))
 		header_data = [] 
-		header_data.append(self.dat_file.read(header[2]))
-		header_data.append(self.dat_file.read(header[3]))
+		try:
+			header_data.append(self.dat_file.read(header[2]))
+			header_data.append(self.dat_file.read(header[3]))
+		except OverflowError:
+			return None
+		except MemoryError:
+			return None
 		data = self.dat_file.read(header[4])
 		if record_id == header[1].encode("hex").upper():
 			return Record(header, header_data, data)
