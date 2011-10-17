@@ -51,15 +51,16 @@ class DatFile:
 		try:
 			header_data.append(self.dat_file.read(header[2]))
 			header_data.append(self.dat_file.read(header[3]))
+			data = self.dat_file.read(header[4])
+			if record_id == header[1].encode("hex").upper():
+				return Record(header, header_data, data)
+			else:
+				return None
 		except OverflowError:
 			return None
 		except MemoryError:
 			return None
-		data = self.dat_file.read(header[4])
-		if record_id == header[1].encode("hex").upper():
-			return Record(header, header_data, data)
-		else:
-			return None
+		
 		
 	def close(self):
 		self.dat_file.close()
